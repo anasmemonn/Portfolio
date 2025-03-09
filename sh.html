@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="images/logo.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Persistent Pomodoro + Task Scheduler</title>
+  <!-- Font Awesome (for icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-dyQPUeyl7BrklX6yJjV+TMRWzrm9a1G5rLPPxV/suWqZ5P6wh57J/RF5KzCuwFTkn5yWUL4W65C2P/p2+9C6VA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* GLOBAL STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background: #fff;
+      flex-direction: row;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    /* LEFT PANEL (Pomodoro + Stats) */
+    .left-panel {
+      background: #FFF7F5;
+      width: 35%;
+      min-width: 320px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #f2d3ce;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    .left-panel > * { margin-bottom: 20px; }
+    .focus-container { text-align: center; }
+    /* Added Font Awesome icon styling */
+    .focus-container i {
+      font-size: 1.2rem;
+      color: #a57f79;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .focus-container h2 { font-size: 1.3rem; color: #a57f79; margin-bottom: 8px; }
+    .focus-container input {
+      width: 80%; padding: 10px;
+      border: 1px solid #ffd9d1; border-radius: 5px;
+      font-size: 1rem; outline: none; text-align: center; color: #444;
+    }
+    .timer-settings { text-align: center; }
+    .timer-settings label { color: #a57f79; margin-right: 8px; font-weight: 500; }
+    .timer-settings input {
+      width: 60px; padding: 5px;
+      border: 1px solid #ffd9d1; border-radius: 5px;
+      text-align: center; font-size: 1rem;
+    }
+    .timer-container {
+      position: relative; width: 200px; height: 200px; margin: 0 auto;
+    }
+    .timer-container svg {
+      width: 200px; height: 200px; transform: rotate(-90deg);
+    }
+    .circle-bg { fill: none; stroke: #fde2de; stroke-width: 10; }
+    .circle-progress {
+      fill: none; stroke: #ff7e6f; stroke-width: 10;
+      stroke-linecap: round; stroke-dasharray: 628;
+      stroke-dashoffset: 628; transition: stroke-dashoffset 1s linear;
+    }
+    .timer-label {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem; color: #333; pointer-events: none;
+    }
+    .timer-controls { text-align: center; }
+    .start-btn {
+      display: inline-block; background-color: #ff7e6f;
+      color: #fff; padding: 15px 30px; border-radius: 25px;
+      text-transform: uppercase; font-weight: bold; border: none;
+      cursor: pointer; margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .start-btn:hover { background-color: #ff5e4f; transform: translateY(-2px); }
+    .controls { margin-top: 10px; }
+    .controls button {
+      background: none; border: none; color: #999;
+      margin: 0 8px; cursor: pointer; font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    .controls button:hover { color: #666; }
+    .session-stats { text-align: center; }
+    .session-stats h3 { font-size: 1.1rem; color: #a57f79; margin-bottom: 10px; }
+    .session-stats p { color: #666; margin: 5px 0; }
+    .clear-history { text-align: center; }
+    .clear-history button {
+      background: none; border: 1px solid #ff7e6f; color: #ff7e6f;
+      padding: 8px 16px; border-radius: 5px; cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .clear-history button:hover { background: #ff7e6f; color: #fff; }
+
+    /* RIGHT PANEL (Tasks + Date) */
+    .right-panel {
+      flex: 1; background: #ffffff; display: flex;
+      flex-direction: column; padding: 20px;
+      transition: background-color 0.3s;
+    }
+    /* Back to Dashboard Button Container */
+    .back-button-container {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .back-dashboard-btn {
+      display: inline-block;
+      background: #00c3ff;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .back-dashboard-btn:hover {
+      background: #0098cc;
+      transform: translateY(-3px);
+    }
+    .right-panel-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 20px;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .right-panel-header h3 { font-size: 1.2rem; color: #444; }
+    .date-display { font-size: 1rem; color: #999; }
+    .add-task-container {
+      display: flex; align-items: center;
+      margin-bottom: 15px; gap: 10px; flex-wrap: wrap;
+    }
+    #taskInput {
+      flex: 1; padding: 10px;
+      border: 1px solid #ddd; border-radius: 5px;
+      font-size: 1rem;
+    }
+    #addTaskBtn {
+      background-color: #ff7e6f; color: #fff;
+      padding: 10px 20px; border-radius: 5px;
+      border: none; cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #addTaskBtn:hover { background-color: #ff5e4f; }
+    .task-list { flex: 1; overflow-y: auto; }
+    .task-item {
+      background-color: #f8f8f8; padding: 10px; margin-bottom: 10px;
+      border-radius: 5px; display: flex;
+      align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .task-left { display: flex; align-items: center; gap: 10px; }
+    .task-left span { color: #444; font-size: 1rem; }
+    .remove-btn {
+      background: none; border: none; color: #999;
+      font-size: 1.2rem; cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .remove-btn:hover { color: #ff5e4f; }
+    .task-checkbox { transform: scale(1.2); cursor: pointer; }
+    .task-done { text-decoration: line-through; color: #999; }
+    .task-list::-webkit-scrollbar { width: 6px; }
+    .task-list::-webkit-scrollbar-thumb {
+      background: #ccc; border-radius: 3px;
+    }
+
+    /* RESPONSIVE (Mobile) */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .left-panel {
+        width: 100%; border-right: none;
+        border-bottom: 1px solid #f2d3ce;
+      }
+      .right-panel { width: 100%; min-height: 60vh; }
+    }
+
+    /* DARK MODE (Improved) */
+    body.dark-mode {
+      background-color: #1e1e1e;
+      color: #fff;
+    }
+    body.dark-mode .left-panel {
+      background-color: #2c2c2c;
+      border-right: 1px solid #444;
+    }
+    body.dark-mode .focus-container h2 { color: #fff; }
+    body.dark-mode .focus-container input {
+      background-color: #444; color: #fff; border-color: #666;
+    }
+    body.dark-mode .timer-settings label,
+    body.dark-mode .timer-settings input {
+      color: #fff; background-color: #444; border-color: #666;
+    }
+    body.dark-mode .circle-bg { stroke: #444; }
+    body.dark-mode .circle-progress { stroke: #ff7e6f; }
+    body.dark-mode .timer-label { color: #fff; }
+    body.dark-mode .session-stats h3 { color: #fff; }
+    body.dark-mode .session-stats p { color: #ccc; }
+    body.dark-mode .start-btn { background-color: #ff7e6f; }
+    body.dark-mode .start-btn:hover { background-color: #ff5e4f; }
+    body.dark-mode .controls button { color: #ccc; }
+    body.dark-mode .controls button:hover { color: #fff; }
+    body.dark-mode .clear-history button {
+      border-color: #ff7e6f; color: #ff7e6f;
+    }
+    body.dark-mode .clear-history button:hover {
+      background-color: #ff7e6f; color: #fff;
+    }
+    body.dark-mode .right-panel { background-color: #2c2c2c; }
+    body.dark-mode .right-panel-header h3 { color: #fff; }
+    body.dark-mode .date-display { color: #aaa; }
+    body.dark-mode #taskInput {
+      background-color: #444; color: #fff; border-color: #666;
+    }
+    body.dark-mode .task-item {
+      background-color: #3c3c3c; color: #ddd;
+    }
+    body.dark-mode .task-left span { color: #fff; }
+    body.dark-mode .task-done { color: #888; }
+    body.dark-mode .remove-btn { color: #ccc; }
+    body.dark-mode .remove-btn:hover { color: #fff; }
+    body.dark-mode #addTaskBtn { background-color: #ff7e6f; }
+    body.dark-mode #addTaskBtn:hover { background-color: #ff5e4f; }
+
+    .theme-toggle-container {
+      text-align: center; 
+      margin-top: auto; 
+      padding-top: 10px;
+    }
+    #themeToggleBtn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #themeToggleBtn:hover { transform: scale(1.2); }
+  </style>
+</head>
+<body>
+  <!-- LEFT PANEL: Pomodoro + Stats -->
+  <div class="left-panel">
+    <div class="focus-container">
+      <!-- Added Font Awesome icon -->
+      <i class="fas fa-lightbulb"></i>
+      <h2>What's your focus?</h2>
+      <input type="text" id="focusInput" placeholder="Your intention..." />
+    </div>
+    <div class="timer-settings">
+      <label for="sessionLength">Session (min):</label>
+      <input type="number" id="sessionLength" min="1" value="25" />
+    </div>
+    <div class="timer-container">
+      <svg>
+        <circle class="circle-bg" cx="100" cy="100" r="90"></circle>
+        <circle id="circleProgress" class="circle-progress" cx="100" cy="100" r="90"></circle>
+      </svg>
+      <div id="timerLabel" class="timer-label" contenteditable="true">25:00</div>
+    </div>
+    <div class="timer-controls">
+      <button id="startBtn" class="start-btn">Start Session</button>
+      <div class="controls">
+        <button id="pauseBtn">Pause</button>
+        <button id="resetBtn">Reset</button>
+        <button id="endSessionBtn">End Session</button>
+      </div>
+    </div>
+    <div class="session-stats">
+      <h3>Session Stats</h3>
+      <p id="sessionCountDisplay">Sessions Completed: 0</p>
+      <p id="focusMinutesDisplay">Total Focus Minutes: 0</p>
+    </div>
+    <div class="clear-history">
+      <button id="clearHistoryBtn">Clear All History</button>
+    </div>
+    <!-- THEME TOGGLE BUTTON -->
+    <div class="theme-toggle-container">
+      <button id="themeToggleBtn"><span id="themeIcon">🌙</span></button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Tasks + Date -->
+  <div class="right-panel">
+    <!-- Back to Dashboard Button placed at the top right -->
+    <div class="back-button-container">
+      <a href="index1.html" class="back-dashboard-btn">Back to Dashboard</a>
+    </div>
+    <div class="right-panel-header">
+      <h3>My Tasks</h3>
+      <div id="dateDisplay" class="date-display">Loading date...</div>
+    </div>
+    <div class="add-task-container">
+      <input type="text" id="taskInput" placeholder="New task..." />
+      <button id="addTaskBtn">Add Task</button>
+    </div>
+    <div class="task-list" id="taskList"></div>
+  </div>
+  
+  <script>
+    /********************************
+     *       LOCALSTORAGE KEYS       *
+     ********************************/
+    const LS_TIMER_DEADLINE  = "pomodoro_deadline";
+    const LS_TIMER_REMAINING = "pomodoro_remaining";
+    const LS_TIMER_RUNNING   = "pomodoro_isRunning";
+    const LS_SESSION_COUNT   = "pomodoro_session_count";
+    const LS_FOCUS_MINUTES   = "pomodoro_focus_minutes";
+    const LS_TASKS           = "pomodoro_tasks";
+    const LS_LAST_DATE       = "pomodoro_last_date";
+    const LS_THEME           = "pomodoro_theme";
+    const LS_SESSION_LENGTH  = "pomodoro_session_length";
+    const LS_CHART_DATA      = "myData"; // We'll store chart data here
+
+    /********************************
+     *  INITIALIZE SESSION STATS & TASKS  *
+     ********************************/
+    let sessionCount   = parseInt(localStorage.getItem(LS_SESSION_COUNT)) || 0;
+    let totalFocusMins = parseInt(localStorage.getItem(LS_FOCUS_MINUTES)) || 0;
+    let tasks          = JSON.parse(localStorage.getItem(LS_TASKS)) || [];
+
+    const sessionCountDisplay = document.getElementById("sessionCountDisplay");
+    const focusMinutesDisplay = document.getElementById("focusMinutesDisplay");
+    function updateStatsUI() {
+      sessionCountDisplay.textContent = "Sessions Completed: " + sessionCount;
+      focusMinutesDisplay.textContent = "Total Focus Minutes: " + totalFocusMins;
+    }
+    updateStatsUI();
+    function saveStats() {
+      localStorage.setItem(LS_SESSION_COUNT, sessionCount);
+      localStorage.setItem(LS_FOCUS_MINUTES, totalFocusMins);
+    }
+
+    /********************************
+     *      TASK LIST UI SETUP       *
+     ********************************/
+    const taskInput = document.getElementById("taskInput");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+    const taskList  = document.getElementById("taskList");
+
+    function saveTasks() {
+      localStorage.setItem(LS_TASKS, JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const div = document.createElement("div");
+        div.classList.add("task-item");
+        const taskLeft = document.createElement("div");
+        taskLeft.classList.add("task-left");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("task-checkbox");
+        checkbox.checked = task.done;
+        checkbox.addEventListener("change", () => {
+          tasks[index].done = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        if (task.done) { span.classList.add("task-done"); }
+        taskLeft.appendChild(checkbox);
+        taskLeft.appendChild(span);
+        const removeBtn = document.createElement("button");
+        removeBtn.classList.add("remove-btn");
+        removeBtn.innerHTML = "&times;";
+        removeBtn.addEventListener("click", () => {
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+        });
+        div.appendChild(taskLeft);
+        div.appendChild(removeBtn);
+        taskList.appendChild(div);
+      });
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text !== "") {
+        tasks.push({ text: text, done: false });
+        saveTasks();
+        renderTasks();
+        taskInput.value = "";
+      }
+    }
+
+    addTaskBtn.addEventListener("click", addTask);
+    taskInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") { addTask(); }
+    });
+    renderTasks();
+
+    /********************************
+     *        AUTO CLEAR HISTORY    *
+     ********************************/
+    function autoClearHistory() {
+      sessionCount = 0;
+      totalFocusMins = 0;
+      tasks = [];
+      saveStats();
+      updateStatsUI();
+      saveTasks();
+      localStorage.setItem(LS_LAST_DATE, new Date().toISOString().slice(0,10));
+      localStorage.removeItem(LS_CHART_DATA);
+    }
+    function checkForNewDay() {
+      const today = new Date().toISOString().slice(0,10);
+      const lastDate = localStorage.getItem(LS_LAST_DATE);
+      if (lastDate !== today) {
+        autoClearHistory();
+      }
+    }
+    checkForNewDay();
+
+    /********************************
+     *        CLEAR HISTORY (Manual) *
+     ********************************/
+    function clearHistory() {
+      if (confirm("Are you sure you want to clear all history?")) {
+        autoClearHistory();
+      }
+    }
+    document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
+
+    /********************************
+     *        POMODORO TIMER         *
+     ********************************/
+    const startBtn       = document.getElementById("startBtn");
+    const pauseBtn       = document.getElementById("pauseBtn");
+    const resetBtn       = document.getElementById("resetBtn");
+    const endSessionBtn  = document.getElementById("endSessionBtn");
+    const circleProgress = document.getElementById("circleProgress");
+    const timerLabel     = document.getElementById("timerLabel");
+    const sessionLength  = document.getElementById("sessionLength");
+
+    // Persist session length value
+    if (localStorage.getItem(LS_SESSION_LENGTH)) {
+      sessionLength.value = localStorage.getItem(LS_SESSION_LENGTH);
+    } else {
+      localStorage.setItem(LS_SESSION_LENGTH, sessionLength.value);
+    }
+
+    let defaultTime      = parseInt(sessionLength.value) * 60;
+    // If timer is not running, force remainingTime to defaultTime
+    let isRunning        = localStorage.getItem(LS_TIMER_RUNNING) === "true";
+    let remainingTime    = (!isRunning) ? defaultTime : (parseInt(localStorage.getItem(LS_TIMER_REMAINING)) || defaultTime);
+    const fullDashOffset = 628;
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+    }
+
+    function updateCircleProgress() {
+      const fraction = remainingTime / defaultTime;
+      const offset = fullDashOffset * fraction;
+      circleProgress.style.strokeDashoffset = offset;
+    }
+
+    function updateTimerLabel() {
+      timerLabel.textContent = formatTime(remainingTime);
+    }
+
+    function saveTimerState() {
+      localStorage.setItem(LS_TIMER_RUNNING, isRunning);
+      localStorage.setItem(LS_TIMER_REMAINING, remainingTime);
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+      localStorage.setItem(LS_TIMER_RUNNING, true);
+      if (!localStorage.getItem(LS_TIMER_DEADLINE)) {
+        const deadline = Date.now() + remainingTime * 1000;
+        localStorage.setItem(LS_TIMER_DEADLINE, deadline);
+      }
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    function tick() {
+      const deadlineLS = parseInt(localStorage.getItem(LS_TIMER_DEADLINE));
+      if (!deadlineLS) {
+        pauseTimer();
+        return;
+      }
+      const now = Date.now();
+      const diff = (deadlineLS - now) / 1000;
+      remainingTime = Math.max(0, Math.floor(diff));
+      updateTimerLabel();
+      updateCircleProgress();
+      saveTimerState();
+      if (remainingTime <= 0) {
+        completeSession();
+      }
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isRunning = false;
+      localStorage.setItem(LS_TIMER_RUNNING, false);
+      localStorage.removeItem(LS_TIMER_DEADLINE);
+      localStorage.setItem(LS_TIMER_REMAINING, remainingTime);
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      // Update and persist the session length value
+      localStorage.setItem(LS_SESSION_LENGTH, sessionLength.value);
+      defaultTime = parseInt(sessionLength.value) * 60;
+      remainingTime = defaultTime;
+      localStorage.removeItem(LS_TIMER_DEADLINE);
+      localStorage.setItem(LS_TIMER_REMAINING, remainingTime);
+      updateTimerLabel();
+      updateCircleProgress();
+    }
+
+    // WHEN A SESSION COMPLETES
+    function completeSession() {
+      pauseTimer();
+      sessionCount++;
+      totalFocusMins += parseInt(sessionLength.value);
+      saveStats();
+      updateStatsUI();
+      alert("Pomodoro session complete!");
+
+      // *********** CHART DATA PUSH ***********
+      let chartData = JSON.parse(localStorage.getItem(LS_CHART_DATA)) || [];
+      chartData.push({
+        session: sessionCount,
+        minutes: parseInt(sessionLength.value)
+      });
+      localStorage.setItem(LS_CHART_DATA, JSON.stringify(chartData));
+      // ***************************************
+
+      resetTimer();
+    }
+
+    // END SESSION EARLY
+    function endSessionEarly() {
+      if (defaultTime === remainingTime) {
+        alert("Session has not started yet.");
+        return;
+      }
+      if (isRunning) {
+        pauseTimer();
+      }
+      const elapsedSeconds = defaultTime - remainingTime;
+      const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+      sessionCount++;
+      totalFocusMins += elapsedMinutes;
+      saveStats();
+      updateStatsUI();
+      alert("Session ended early. Elapsed time: " + formatTime(elapsedSeconds));
+
+      let chartData = JSON.parse(localStorage.getItem(LS_CHART_DATA)) || [];
+      chartData.push({
+        session: sessionCount,
+        minutes: elapsedMinutes
+      });
+      localStorage.setItem(LS_CHART_DATA, JSON.stringify(chartData));
+
+      resetTimer();
+    }
+
+    function initTimerUI() {
+      // If timer is not running, ensure timer resets to default
+      if (!isRunning) {
+        remainingTime = defaultTime;
+      }
+      updateTimerLabel();
+      updateCircleProgress();
+      const deadlineLS = localStorage.getItem(LS_TIMER_DEADLINE);
+      if (deadlineLS && isRunning) {
+        timerInterval = setInterval(tick, 1000);
+      }
+    }
+    initTimerUI();
+
+    startBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+    endSessionBtn.addEventListener("click", endSessionEarly);
+    sessionLength.addEventListener("change", () => {
+      localStorage.setItem(LS_SESSION_LENGTH, sessionLength.value);
+      resetTimer();
+    });
+
+    /********************************
+     *      DARK MODE TOGGLE         *
+     ********************************/
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    const themeIcon      = document.getElementById("themeIcon");
+
+    // On page load, read theme from localStorage
+    let currentTheme = localStorage.getItem(LS_THEME) || "light"; 
+    applyTheme(currentTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      currentTheme = (currentTheme === "light") ? "dark" : "light";
+      applyTheme(currentTheme);
+    });
+
+    function applyTheme(theme) {
+      if (theme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeIcon.textContent = "☀️"; // sun icon
+      } else {
+        document.body.classList.remove("dark-mode");
+        themeIcon.textContent = "🌙"; // moon icon
+      }
+      localStorage.setItem(LS_THEME, theme);
+    }
+
+    /********************************
+     *  SHOW DATE (OPTIONAL)        *
+     ********************************/
+    const dateDisplay = document.getElementById("dateDisplay");
+    if(dateDisplay) {
+      const today = new Date();
+      dateDisplay.textContent = today.toDateString();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <title> Futuristic Layout</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <style>
+    :root {
+      --primary-color: #b7ff00ab;   /* Neon Blue */
+      --text-color: #ffffff;      /* Main text color */
+      
+      --radius: 8px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Particle.js container with a background image */
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: url('gh.png') no-repeat center center fixed;
+      background-size: cover;
+      z-index: 0; /* So particles stay behind the content */
+    }
+
+    /* Main wrapper for the content */
+    .container {
+      position: relative;
+      z-index: 1; /* Above the particles */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    /* The semi-transparent panel holding your content */
+    .panel {
+      display: flex;
+      flex-direction: row;
+      background: var(--panel-bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 1000px;
+      width: 100%;
+      gap: 2rem;
+    }
+
+    /* Left side for main text */
+    .left-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: var(--text-color);
+    }
+
+    .left-content h1 {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .left-content p.subheading {
+      margin-bottom: 1rem;
+      color: #ccc;
+    }
+
+    .left-content h2 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+
+    .left-content p.description {
+      color: #ddd;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Buttons for projects */
+    .options {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .options a {
+      display: inline-block;
+      padding: 0.8rem 1.2rem;
+      background: var(--primary-color);
+      color: #000;
+      text-decoration: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      transition: background var(--transition-speed);
+    }
+
+    .options a:hover {
+      background: #00a3cc;
+    }
+
+    /* Right side for an image or any other content you like */
+    .right-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px  ;
+    }
+
+    .right-content img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 2px solid var(--primary-color);
+    }
+
+    /* Responsive: stack the panel on small screens */
+    @media (max-width: 900px) {
+      .panel {
+        flex-direction: column;
+      }
+      .right-content {
+        margin-top: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Particle.js background -->
+  <div id="particles-js"></div>
+
+  <!-- Main content container -->
+  <div class="container">
+    <div class="panel">
+      <!-- Left side content -->
+      <div class="left-content">
+        <h1>WEB DEVELOPMENT PROJECT IDEAS</h1>
+        <p class="subheading">Create something futuristic and innovative</p>
+        <h2>Anas Memon</h2>
+        <p class="description">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Phasellus bibendum metus a semper hendrerit. Morbi et libero vitae
+          neque posuere accumsan. Suspendisse potenti.
+        </p>
+        <div class="options">
+          <a href="index1.html">Project 1</a>
+          <a href="#">Project 2</a>
+          <a href="#">Project 3</a>
+        </div>
+      </div>
+
+      <!-- Right side content (e.g., an image or any extra design) -->
+      <div class="right-content">
+        <img src="coder.jpg" alt="Futuristic Image" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Particle.js library (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <script>
+    /* Minimal Particle.js config (adjust values as you wish) */
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#ffffff"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          },
+          "polygon": {
+            "nb_sides": 5
+          }
+        },
+        "opacity": {
+          "value": 0.5
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 3,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 400,
+            "line_linked": {
+              "opacity": 1
+            }
+          },
+          "bubble": {
+            "distance": 400,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8
+          },
+          "repulse": {
+            "distance": 100,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+</html>

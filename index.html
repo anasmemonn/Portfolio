@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio - Futuristic Loading</title>
+  <!-- Google Fonts (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Example: Poppins font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================
+       GLOBAL RESETS & FONTS
+    ========================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #111; /* Dark background */
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+    .container {
+      width: 90%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* =========================
+       NAVBAR
+    ========================== */
+    header {
+      padding: 20px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      background: rgba(17, 17, 17, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+    .logo:hover img {
+      transform: scale(1.05);
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links li a {
+      text-decoration: none;
+      color: #ccc;
+      font-weight: 400;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .nav-links li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: #00c184;
+      bottom: -5px;
+      left: 0;
+      transition: width 0.3s ease;
+    }
+    .nav-links li a:hover {
+      color: #fff;
+    }
+    .nav-links li a:hover::after {
+      width: 100%;
+    }
+    .contact-btn {
+      background-color: #FBB02D;
+      color: #111;
+      padding: 12px 28px;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(251, 176, 45, 0.3);
+    }
+    .contact-btn:hover {
+      background-color: #ffa500;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(251, 176, 45, 0.4);
+    }
+
+    /* =========================
+       HERO SECTION
+    ========================== */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 180px 0 100px;
+      min-height: 100vh;
+      flex-wrap: wrap;
+    }
+    .hero-text {
+      flex: 1 1 600px;
+      padding-left: 50px;
+      order: 2; /* Text on the right side */
+    }
+    .hero-text h5 {
+      color: #00c184;
+      font-weight: 500;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+    .hero-text h1 {
+      font-size: 4rem;
+      line-height: 1.1;
+      margin-bottom: 25px;
+      background: linear-gradient(45deg, #fff 60%, #00c184);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-text p {
+      color: #ccc;
+      line-height: 1.8;
+      margin-bottom: 35px;
+      max-width: 600px;
+      font-size: 1.1rem;
+    }
+    .hero-text .btn.cta-btn {
+      background: linear-gradient(135deg, #FBB02D 0%, #FFA500 100%);
+      color: #111;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .hero-text .btn.cta-btn:hover {
+      background: linear-gradient(135deg, #FFA500 0%, #FBB02D 100%);
+      color: #640505;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    /* =========================
+       HERO IMAGE
+    ========================== */
+    .hero-image {
+      position: relative;
+      flex: 1 1 500px;
+      min-width: 400px;
+      opacity: 0; /* start hidden for animation */
+      order: 1; /* Ensure image is on the left side */
+      animation: fadeInRight 1s forwards ease 0.5s; /* Fade in with delay */
+      transition: transform 0.3s ease; /* Smooth transform transition */
+    }
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px); /* Start slightly to the right */
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .green-circle {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00c184 0%, rgba(0, 193, 132, 0.1) 70%);
+      filter: blur(30px);
+      opacity: 0.4;
+      z-index: 1;
+      animation: pulse 4s infinite;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    @keyframes pulse {
+      0%   { transform: translateX(-50%) scale(0.95); opacity: 0.3; }
+      50%  { transform: translateX(-50%) scale(1);    opacity: 0.5; }
+      100% { transform: translateX(-50%) scale(0.95); opacity: 0.3; }
+    }
+    .profile-pic {
+      position: relative;
+      width: 100%;
+      max-width: 450px;
+      z-index: 2;
+      border-radius: 50%; /* Perfect circle */
+      overflow: hidden;
+      margin-left: 20%;
+      transition: transform 0.5s ease;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+    footer {
+      padding: 40px 0;
+      text-align: center;
+      background: #000;
+      position: relative;
+    }
+    .footer-content p {
+      color: #666;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    /* =========================
+       RESPONSIVE DESIGN
+    ========================== */
+    @media (max-width: 1200px) {
+      .hero-text h1 { font-size: 3.5rem; }
+      .hero-image { margin-left: 10%; }
+    }
+    @media (max-width: 992px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 150px 0 60px;
+      }
+      .hero-text {
+        padding-left: 0;
+        margin-bottom: 50px;
+        order: 2;
+      }
+      .hero-image {
+        order: 1;
+        margin-left: 0;
+      }
+      .profile-pic { max-width: 350px; }
+      .green-circle { width: 350px; height: 350px; }
+    }
+    @media (max-width: 768px) {
+      .hero-text h1 { font-size: 2.8rem; }
+      .nav-links { display: none; }
+      #hamburger { display: block; }
+    }
+    @media (max-width: 480px) {
+      .hero-text h1 { font-size: 2.2rem; }
+      .hero-image { min-width: 280px; }
+      .contact-btn { padding: 10px 20px; }
+      footer p { font-size: 1rem; }
+    }
+
+    /* =========================
+       LOADING OVERLAY
+    ========================== */
+    #loading-screen {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000; /* dark background for the loader */
+      display: none;    /* hidden by default */
+      align-items: center;
+      justify-content: center;
+    }
+    /* The futuristic arcs container */
+    .loader {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+    .loader svg {
+      width: 100%;
+      height: 100%;
+    }
+    /* Common arc styles */
+    .arc {
+      fill: none;
+      stroke-linecap: round;
+      stroke-width: 4;
+      stroke-dasharray: 3, 6; /* dashed pattern */
+      animation: spin 2s linear infinite;
+      transform-origin: 50% 50%;
+    }
+    /* Outer arc */
+    .arc1 {
+      stroke: #00c3ff;
+      r: 70;
+      stroke-dasharray: 220 999;  /* ~ half arc visible */
+      stroke-dashoffset: 0;
+      animation-duration: 2.5s;
+    }
+    /* Middle arc */
+    .arc2 {
+      stroke: #ffffff;
+      r: 55;
+      stroke-dasharray: 180 999;
+      stroke-dashoffset: -40;
+      animation-duration: 2s;
+      animation-direction: reverse; /* spin opposite direction */
+    }
+    /* Inner arc */
+    .arc3 {
+      stroke: #00c3ff;
+      r: 40;
+      stroke-dasharray: 120 999;
+      stroke-dashoffset: 60;
+      animation-duration: 3s;
+    }
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Center text inside the loader */
+    .loader-text {
+      fill: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.4em;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      /* Glowing effect */
+      text-shadow: 0 0 5px #00c3ff, 0 0 10px #00c3ff, 0 0 20px #00c3ff;
+    }
+  </style>
+</head>
+<body>
+  <!-- ======= HEADER / NAV ======= -->
+  <header>
+    <nav id="navbar" class="navbar container">
+      <!-- (If you want a mobile hamburger, uncomment below)
+      <button id="hamburger">&#9776;</button>
+      -->
+      <!-- Left logo -->
+      <div class="logo">
+        <img src="images/logo.png" alt="JFD Logo" />
+      </div>
+      
+      <!-- Nav links -->
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <!-- Projects link triggers the 2-second futuristic loader -->
+        <li><a href="3.html" id="projects-link">Projects</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+
+      <!-- Contact button -->
+      <a href="#" class="btn contact-btn">Contact Me</a>
+    </nav>
+  </header>
+
+  <!-- ======= HERO SECTION ======= -->
+  <section class="hero container">
+    <div class="hero-text">
+      <h5>— Introducing</h5>
+      <h1>Hello <br> I’m <span>Anas Memon</span></h1>
+      <p>
+        I am Anas, a passionate and dedicated student striving to become a software engineer. I created this portfolio to showcase my skills, projects, and journey in coding and web development. I have a strong interest in React.js, ethical hacking, and problem-solving, constantly working on improving my knowledge and skills. My goal is to build innovative and efficient solutions while continuously learning new technologies. This portfolio reflects my dedication, creativity, and vision for the future. 🚀
+      </p>
+      <a href="#" class="btn cta-btn">Step by Step</a>
+    </div>
+    
+    <div class="hero-image">
+      <!-- Circle background behind image -->
+      <div class="green-circle"></div>
+      <!-- The man’s photo -->
+      <img src="images/hero-image.png" alt="Profile Image" class="profile-pic" />
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer>
+    <div class="container footer-content">
+      <p>© 2025 - All rights reserved by Anas Memon</p>
+    </div>
+  </footer>
+
+  <!-- ======= LOADING OVERLAY with FUTURISTIC ARCS ======= -->
+  <div id="loading-screen">
+    <div class="loader">
+      <svg viewBox="0 0 200 200">
+        <!-- Outer arc -->
+        <circle class="arc arc1" cx="100" cy="100" r="70"></circle>
+        <!-- Middle arc -->
+        <circle class="arc arc2" cx="100" cy="100" r="55"></circle>
+        <!-- Inner arc -->
+        <circle class="arc arc3" cx="100" cy="100" r="40"></circle>
+        
+        <!-- Dynamic center text (starts blank or 0%) -->
+        <text id="loader-percent" x="100" y="100" class="loader-text">0%</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ======= All JavaScript ======= -->
+  <script>
+    // 1) Hamburger menu toggle (uncomment if you want to use it)
+    const hamburger = document.getElementById('hamburger');
+    const navbar = document.getElementById('navbar');
+    if (hamburger && navbar) {
+      hamburger.addEventListener('click', () => {
+        const navList = navbar.querySelector('ul');
+        if (navList.style.display === 'flex') {
+          navList.style.display = 'none';
+        } else {
+          navList.style.display = 'flex';
+        }
+      });
+    }
+
+    // 2) Smooth scrolling for nav links (optional)
+    document.querySelectorAll('.navbar a').forEach(link => {
+      link.addEventListener('click', function (e) {
+        // If link is an anchor (#something), smooth scroll
+        if (this.getAttribute('href').startsWith('#')) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            window.scrollTo({
+              top: target.offsetTop - 60,
+              behavior: 'smooth'
+            });
+          }
+          // Close the mobile menu after clicking (on small screens)
+          const navList = navbar.querySelector('ul');
+          if (window.innerWidth < 768 && navList.style.display === 'flex') {
+            navList.style.display = 'none';
+          }
+        }
+      });
+    });
+
+    // 3) Futuristic LOADING SCREEN for 2s when going to 3.html
+    const projectsLink = document.getElementById('projects-link');
+    if (projectsLink) {
+      projectsLink.addEventListener('click', function(e) {
+        e.preventDefault(); // Stop immediate navigation
+        
+        // Show the arcs-based loader
+        document.getElementById('loading-screen').style.display = 'flex';
+        
+        // Animate center text from 1% to 100% in 2 seconds (100 steps @ 20ms each)
+        let percentage = 0;
+        const loaderPercentEl = document.getElementById('loader-percent');
+        
+        const loadingInterval = setInterval(() => {
+          percentage++;
+          loaderPercentEl.textContent = percentage + "%";
+          
+          if (percentage >= 100) {
+            clearInterval(loadingInterval);
+          }
+        }, 20);
+        
+        // After 2 seconds, navigate to 3.html
+        setTimeout(() => {
+          window.location.href = '3.html';
+        }, 2000);
+      });
+    }
+
+    // 4) Intersection Observer for Scroll Animations (if you want to use .hidden elements)
+    const hiddenElements = document.querySelectorAll('.hidden');
+    const observerOptions = { threshold: 0.2 };
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          entry.target.classList.add('show');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    hiddenElements.forEach(el => observer.observe(el));
+
+    // 5) Parallax effect on scroll for an element with .parallax-bg (if any)
+    window.addEventListener('scroll', () => {
+      const parallax = document.querySelector('.parallax-bg');
+      if (parallax) {
+        const scrollPosition = window.pageYOffset;
+        parallax.style.transform = `translateY(${scrollPosition * -0.3}px) scale(2)`;
+      }
+    });
+  </script>
+</body>
+</html>
