@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="images/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portfolio - Futuristic Loading</title>
   <!-- Google Fonts (optional) -->
@@ -11,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Example: Poppins font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
   <style>
     /* =========================
        GLOBAL RESETS & FONTS
@@ -49,7 +47,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
     }
+
+    /* Logo */
     .logo img {
       height: 50px;
       transition: transform 0.3s ease;
@@ -57,6 +58,18 @@
     .logo:hover img {
       transform: scale(1.05);
     }
+
+    /* Hamburger Menu (for mobile) */
+    #hamburger {
+      display: none;
+      font-size: 1.5rem;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    /* Navigation links */
     .nav-links {
       display: flex;
       gap: 40px;
@@ -85,6 +98,8 @@
     .nav-links li a:hover::after {
       width: 100%;
     }
+
+    /* Contact Button */
     .contact-btn {
       background-color: #FBB02D;
       color: #111;
@@ -253,8 +268,26 @@
     }
     @media (max-width: 768px) {
       .hero-text h1 { font-size: 2.8rem; }
-      .nav-links { display: none; }
-      #hamburger { display: block; }
+      
+      /* Mobile Navigation: Hide default nav and use mobile dropdown */
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: rgba(17, 17, 17, 0.95);
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 0;
+      }
+      .nav-links.nav-active { 
+        display: flex;
+      }
+      #hamburger { 
+        display: block; 
+      }
     }
     @media (max-width: 480px) {
       .hero-text h1 { font-size: 2.2rem; }
@@ -273,12 +306,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #000; /* dark background for the loader */
-      display: none;    /* hidden by default */
+      background: #000;
+      display: none;
       align-items: center;
       justify-content: center;
     }
-    /* The futuristic arcs container */
     .loader {
       position: relative;
       width: 200px;
@@ -293,7 +325,7 @@
       fill: none;
       stroke-linecap: round;
       stroke-width: 4;
-      stroke-dasharray: 3, 6; /* dashed pattern */
+      stroke-dasharray: 3, 6;
       animation: spin 2s linear infinite;
       transform-origin: 50% 50%;
     }
@@ -301,7 +333,7 @@
     .arc1 {
       stroke: #00c3ff;
       r: 70;
-      stroke-dasharray: 220 999;  /* ~ half arc visible */
+      stroke-dasharray: 220 999;
       stroke-dashoffset: 0;
       animation-duration: 2.5s;
     }
@@ -312,7 +344,7 @@
       stroke-dasharray: 180 999;
       stroke-dashoffset: -40;
       animation-duration: 2s;
-      animation-direction: reverse; /* spin opposite direction */
+      animation-direction: reverse;
     }
     /* Inner arc */
     .arc3 {
@@ -326,7 +358,6 @@
       0%   { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
     /* Center text inside the loader */
     .loader-text {
       fill: #fff;
@@ -334,7 +365,6 @@
       font-size: 1.4em;
       text-anchor: middle;
       dominant-baseline: middle;
-      /* Glowing effect */
       text-shadow: 0 0 5px #00c3ff, 0 0 10px #00c3ff, 0 0 20px #00c3ff;
     }
   </style>
@@ -343,12 +373,11 @@
   <!-- ======= HEADER / NAV ======= -->
   <header>
     <nav id="navbar" class="navbar container">
-      <!-- (If you want a mobile hamburger, uncomment below)
+      <!-- Hamburger icon for mobile -->
       <button id="hamburger">&#9776;</button>
-      -->
       <!-- Left logo -->
       <div class="logo">
-        <img src="logo.png" alt="JFD Logo" />
+        <img src="images/logo.png" alt="JFD Logo" />
       </div>
       
       <!-- Nav links -->
@@ -409,17 +438,12 @@
 
   <!-- ======= All JavaScript ======= -->
   <script>
-    // 1) Hamburger menu toggle (uncomment if you want to use it)
+    // 1) Hamburger menu toggle
     const hamburger = document.getElementById('hamburger');
-    const navbar = document.getElementById('navbar');
-    if (hamburger && navbar) {
+    const navList = document.querySelector('.nav-links');
+    if (hamburger && navList) {
       hamburger.addEventListener('click', () => {
-        const navList = navbar.querySelector('ul');
-        if (navList.style.display === 'flex') {
-          navList.style.display = 'none';
-        } else {
-          navList.style.display = 'flex';
-        }
+        navList.classList.toggle('nav-active');
       });
     }
 
@@ -437,9 +461,8 @@
             });
           }
           // Close the mobile menu after clicking (on small screens)
-          const navList = navbar.querySelector('ul');
-          if (window.innerWidth < 768 && navList.style.display === 'flex') {
-            navList.style.display = 'none';
+          if (window.innerWidth < 768 && navList.classList.contains('nav-active')) {
+            navList.classList.remove('nav-active');
           }
         }
       });
